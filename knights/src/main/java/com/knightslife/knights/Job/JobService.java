@@ -1,10 +1,12 @@
 package com.knightslife.knights.Job;
 import java.util.List;
 
+import com.knightslife.knights.Job.dto.JobWithCompanyDTO;
+
 public interface JobService {
-    List<Job> findAll();
+    List<JobWithCompanyDTO> findAll();
     void createJob(Job job);
-    Job getJobById(Long id);
+    JobWithCompanyDTO getJobById(Long id);
     boolean deleteJobById(Long id);
     boolean updateJobById(Long id, Job updatedJob);
     

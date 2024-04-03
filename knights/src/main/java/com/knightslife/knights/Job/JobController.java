@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.knightslife.knights.Job.dto.JobWithCompanyDTO;
+
 @RestController
 @RequestMapping("/jobs")
 public class JobController {
@@ -37,7 +39,7 @@ public class JobController {
 
     // @GetMapping("/jobs")            After applying @RequestMapping at the base 
     @GetMapping
-    public ResponseEntity<List<Job>> findAll(){
+    public ResponseEntity<List<JobWithCompanyDTO>> findAll(){
         // return new ResponseEntity<>(jobService.findAll(), HttpStatus.OK);
         return ResponseEntity.ok(jobService.findAll());
     }
@@ -49,27 +51,27 @@ public class JobController {
         return new ResponseEntity<>("Job added Successfully", HttpStatus.OK);
     }
 
-
     // Defining the dyanmic part id basically the query part 
-
     @GetMapping("/{id}")
-    public ResponseEntity<Job> getJobById(@PathVariable Long id){
-        Job job = jobService.getJobById(id);
-        if(job != null){
-            return new ResponseEntity<>(job, HttpStatus.OK);
+    public ResponseEntity<JobWithCompanyDTO> getJobById(@PathVariable Long id){
+        // Job job = jobService.getJobById(id);
+        JobWithCompanyDTO jobWithCompanyDTO = jobService.getJobById(id);
+        if(jobWithCompanyDTO != null){
+            return new ResponseEntity<>(jobWithCompanyDTO, HttpStatus.OK);
             // We are creating a reponse object here with  job object and with the status code 
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
+    
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteJob(@PathVariable Long id){
         boolean deleted=jobService.deleteJobById(id);
         if(deleted)
             return new ResponseEntity<>("Job deleted Successfully", HttpStatus.OK);
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-
     }
+
     // @RequestMapping(value = "/jobs/{id}", method = RequestMethod.PUT/GET/POST/UPDATE) ---------->Alternate method
     @PutMapping("/{id}")
     public ResponseEntity<String> updateJob(@PathVariable Long id, @RequestBody Job updatedJob){
