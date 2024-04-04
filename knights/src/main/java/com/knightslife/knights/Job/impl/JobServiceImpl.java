@@ -1,5 +1,6 @@
 package com.knightslife.knights.Job.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -40,9 +41,21 @@ public class JobServiceImpl implements JobService {
     private Long nextId = 1L;
 
     @Override
+    // @CircuitBreaker(name="companyBreaker", fallbackMethod="companyBreakerFallback")
+    // Now We'll be suing the retry method 
+    // int attempt=0;
+    // @Retry(name="CompanyBreaker", fallbackMethod="companyBreakerFallback")
+    // @RateLimiter(name="companyBreaker", fallbackMethod="companyBreakerFallback")
     public List<JobWithCompanyDTO> findAll() {
+        // System.out.println("Attempt: "+ ++attempt);
         List<Job> jobs=jobRepository.findAll();
         return jobs.stream().map(this::convertToDto).collect(Collectors.toList());
+    }
+
+    public List<String> companyBreakerFallback(Exception e ){
+        List<String> list = new ArrayList<>();
+        list.add("Dummy");
+        return list; 
     }
 
     private JobWithCompanyDTO convertToDto(Job job){
@@ -55,9 +68,6 @@ public class JobServiceImpl implements JobService {
         // Company company = restTemplate.getForObject("http://COMPANY-SERVICE:8081/companies/" + job.getCompanyId(), Company.class);
         // Now we'll be modifieing using the Feign after defining the compnayClient.java classs 
         // We'll be modifing according as Feign 
-
-
-
 
         // Now we need to add the review also 
         // From Every company Id we can fetch the review 
@@ -73,8 +83,6 @@ public class JobServiceImpl implements JobService {
         // List<Review> reviews = reviewResponse.getBody();
 
         // Now we need to add the review also  
-
-
         // Now our Feign Interfacees will do the calling job 
         Company company = companyClient.getCompany(job.getCompanyId());
         List<Review> reviews = (List<Review>) reviewClient.getReviews(job.getCompanyId());

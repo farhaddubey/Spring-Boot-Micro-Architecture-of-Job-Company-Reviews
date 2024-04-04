@@ -8,11 +8,17 @@ import org.springframework.stereotype.Service;
 import com.knightscom.knightscom.company.Company;
 import com.knightscom.knightscom.company.CompanyRepository;
 import com.knightscom.knightscom.company.CompanyService;
+import com.knightscom.knightscom.company.clients.ReviewClient;
+import com.knightscom.knightscom.company.dto.ReviewMessage;
+
+import jakarta.ws.rs.NotFoundException;
 
 @Service
 public class CompanyServiceImplemantation implements CompanyService {
     private CompanyRepository companyRepository;
-    public CompanyServiceImplemantation(CompanyRepository companyRepository) {
+    ReviewClient reviewClient;
+    public CompanyServiceImplemantation(CompanyRepository companyRepository, ReviewClient reviewClient) {
+        this.reviewClient = reviewClient;
         this.companyRepository = companyRepository;
     }
     @Override
@@ -50,6 +56,15 @@ public class CompanyServiceImplemantation implements CompanyService {
     @Override
     public Company getCompanyById(Long id) {
         return companyRepository.findById(id).orElse(null);
+    }
+    @Override
+    public void updateCompanyRating(ReviewMessage reviewMessage) {
+        System.out.println(reviewMessage.getDescription());
+        Company company = companyRepository.findById(reviewMessage.getCompanyId())
+        .orElseThrow(()->new NotFoundException("Company Not Found"+ reviewMessage));
+        double averageRating = reviewClient.getAverageRatingForCompany(reviewMessage.getRating());
+        company.setRating(averageRating);
+        companyRepository.save(company);
     }
 
    

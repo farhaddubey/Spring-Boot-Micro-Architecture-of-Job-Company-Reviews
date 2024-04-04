@@ -1,0 +1,10 @@
+apiVersion: v1 
+kind: Service 
+metadata: 
+  name: job
+spec: 
+  selector: # through selector it finds where to send the traffic 
+    app: job # by app name it selects that app with mathcing those target post
+  ports:
+    - port: 80 # container port
+      targetPort: 8082 # exposeing port 

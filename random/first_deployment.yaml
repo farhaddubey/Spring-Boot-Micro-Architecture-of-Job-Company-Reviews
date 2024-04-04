@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-deployment
+spec:
+  selector:
+    matchLabels:
+      app: myapp
+  template:
+    metadata:
+      labels:
+        app: myapp
+    spec:
+      containers:
+      - name: myapp
+        image: myapp:1.0
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+# deployments required to roll out and roll back  It ensures self healing of any pod...
+# kubectl apply -f .\first-deployment.yaml
+# kubectl get deployments 
+

@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.review_micro.reviews.review.messaging.ReviewMessageProducer;
 @RestController
 @RequestMapping("/reviews")
 public class ReviewController {
@@ -28,8 +30,11 @@ public class ReviewController {
     @PostMapping
     public ResponseEntity<String> addReview(@RequestParam Long companyId, @RequestBody Review review){
         boolean isReviewSaved = reviewService.addReview(companyId, review);
-        if(isReviewSaved)
+        if(isReviewSaved){
+
+            ReviewMessageProducer.sendMessage(review);
             return new ResponseEntity<>("Review added Successfully", HttpStatus.OK);
+        }
         else
             return new ResponseEntity<>("Review Not saved", HttpStatus.NOT_FOUND);
     }
